@@ -20,7 +20,11 @@ int main(int argc, char *argv[]) {
         std::printf("cannot open %s\n", filename);
         return 1;
     }
-    avformat_find_stream_info(fmt,NULL);
+    if(avformat_find_stream_info(fmt,NULL)<0){
+        std::printf("cannot find stream info %s\n",filename);
+        avformat_close_input(&fmt);
+        return 1;
+    }
     std::printf("Format %s, duration %.6fs\n",
                 fmt->iformat->long_name, fmt->duration/1000000.0);
 
