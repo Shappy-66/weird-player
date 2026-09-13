@@ -6,6 +6,9 @@ extern "C" {
 #include <cstdio>
 #include <cstring>
 #include <cinttypes>
+static AVCodecContext *video_dec_ctx;
+static AVStream *video_stream=NULL;
+static int video_stream_idx = -1;
 
 static int open_codec_context(int *stream_idx,
                               AVCodecContext **dec_ctx, AVFormatContext *fmt_ctx, enum AVMediaType type)
@@ -63,6 +66,8 @@ int main(int argc, char *argv[]) {
     std::printf("Format %s, duration %.6fs\n",
                 fmt->iformat->long_name, fmt->duration/1000000.0);
 
+    if (open_codec_context(&video_stream_idx,&video_dec_ctx,fmt,AVMEDIA_TYPE_VIDEO)>=0)
+        video_stream=fmt->streams[video_stream_idx];
     avformat_close_input(&fmt);
     return 0;
 }
