@@ -9,6 +9,7 @@ extern "C" {
 static AVCodecContext *video_dec_ctx;
 static AVStream *video_stream=NULL;
 static int video_stream_idx = -1;
+static FILE *video_file;
 
 static int open_codec_context(int *stream_idx,
                               AVCodecContext **dec_ctx, AVFormatContext *fmt_ctx, enum AVMediaType type)
@@ -45,6 +46,7 @@ static int open_codec_context(int *stream_idx,
     return 0;
 }
 int main(int argc, char *argv[]) {
+    int ret = 0;
     const char *filename, *outfilename;
      if (argc <= 2) {
         fprintf(stderr, "Usage: %s <input file> <output file>\n"
@@ -67,7 +69,15 @@ int main(int argc, char *argv[]) {
                 fmt->iformat->long_name, fmt->duration/1000000.0);
 
     if (open_codec_context(&video_stream_idx,&video_dec_ctx,fmt,AVMEDIA_TYPE_VIDEO)>=0)
-        video_stream=fmt->streams[video_stream_idx];
+        video_stream = fmt->streams[video_stream_idx];
+    video_file = fopen(filename,"wb");
+    if (!video_file) {
+             printf("Could not open destination file %s\n", filename);
+             ret = 1;
+             goto end;
+        }
+    end:
+    avcodec_free_context(&video_dec_ctx);
     avformat_close_input(&fmt);
     return 0;
 }
