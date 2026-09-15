@@ -2,15 +2,20 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
 #include <libavutil/avutil.h>
+#include <libavutil/imgutils.h>
 }
 #include <cstdio>
 #include <cstring>
 #include <cinttypes>
+
 static AVCodecContext *video_dec_ctx;
 static AVStream *video_stream=NULL;
 static int video_stream_idx = -1;
 static FILE *video_file;
-
+static uint8_t *video_dst_data[4] = {NULL};
+static int      video_dst_linesize[4];
+static int width,height;
+static enum AVPixelFormat pix_fmt;
 static int open_codec_context(int *stream_idx,
                               AVCodecContext **dec_ctx, AVFormatContext *fmt_ctx, enum AVMediaType type)
 {
@@ -58,12 +63,13 @@ int main(int argc, char *argv[]) {
     AVFormatContext *fmt = avformat_alloc_context();
     if (avformat_open_input(&fmt, filename, nullptr, nullptr) < 0) {
         std::printf("cannot open %s\n", filename);
-        return 1;
+        ret = 1;
+        goto end;
     }
     if(avformat_find_stream_info(fmt,NULL)<0){
         std::printf("cannot find stream info %s\n",filename);
-        avformat_close_input(&fmt);
-        return 1;
+        ret = 1;
+        goto end;
     }
     std::printf("Format %s, duration %.6fs\n",
                 fmt->iformat->long_name, fmt->duration/1000000.0);
@@ -76,6 +82,15 @@ int main(int argc, char *argv[]) {
              ret = 1;
              goto end;
         }
+    width = video_dec_ctx->width;
+    height = video_dec_ctx->height;
+    pix_fmt = video_dec_ctx->pix_fmt;
+    if(av_image_alloc(video_dst_data, video_dst_linesize, width, height, pix_fmt, 1)<0){
+        printf("alloc image failed");
+        ret = 1;
+        goto end;
+    }
+
     end:
     avcodec_free_context(&video_dec_ctx);
     avformat_close_input(&fmt);
