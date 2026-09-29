@@ -1,5 +1,6 @@
 # weird-player
-基于ffmpeg和sdl3在linux上的简易视频播放器(qt界面正在计划中)
+基于ffmpeg和sdl3在linux和window上的简易视频播放器(qt界面正在计划中)
+在windows上通过 MSYS2 提供了整套 Unix 构建环境（sh + make + g++ + pkg-config + coreutils）
 #### 目前打算实现的目标版本
 - [x] 简单实现输出目标视频的封装格式与时长
 - [ ] v1：解码视频帧并保存 YUV 文件

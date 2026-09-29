@@ -1,10 +1,15 @@
 # weird-player: build outputs go into build/
 CXX      ?= g++
 CXXFLAGS ?= -O2 -Wall
-PKGS      = libavformat libavcodec
+PKGS      =  libavformat libavcodec libavutil
 
 SRC      := shappy_player.cpp
-TARGET   := build/shappy_player
+ifeq ($(OS),Windows_NT)
+EXE      := .exe
+else
+EXE      :=
+endif
+TARGET   := build/shappy_player$(EXE)
 
 PKG_CFLAGS := $(shell pkg-config --cflags $(PKGS))
 PKG_LIBS   := $(shell pkg-config --libs $(PKGS))

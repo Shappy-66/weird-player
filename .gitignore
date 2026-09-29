@@ -1,3 +1,4 @@
 # build artifacts
 build/
 *.mp4
+.vscode/
