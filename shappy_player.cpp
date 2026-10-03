@@ -4,6 +4,7 @@ extern "C" {
 #include <libavutil/avutil.h>
 #include <libavutil/imgutils.h>
 }
+#include <iostream>
 #include <cstdio>
 #include <cstring>
 #include <cinttypes>
@@ -52,11 +53,11 @@ static int open_codec_context(int *stream_idx,
 }
 int main(int argc, char *argv[]) {
     int ret = 0;
+    std::cout << "shappy"; 
     const char *filename, *outfilename;
      if (argc <= 2) {
-        fprintf(stderr, "Usage: %s <input file> <output file>\n"
-                "And check your input file is encoded by mpeg1video please.\n", argv[0]);
-        exit(0);
+        fprintf(stderr, "Usage: %s <input file> <output file>\n", argv[0]);
+        exit(1);
     }
     filename = argv[1];
     outfilename = argv[2];
@@ -89,6 +90,10 @@ int main(int argc, char *argv[]) {
         printf("alloc image failed");
         ret = 1;
         goto end;
+    }
+    av_dump_format(fmt, 0,filename, 0);
+    if(!video_stream){
+        printf("Could not find video stream in the input\n");
     }
 
     end:
