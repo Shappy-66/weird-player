@@ -23,7 +23,7 @@ $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) $(PKG_CFLAGS) -o $@ $< $(PKG_LIBS)
 
 run: all
-	./$(TARGET) test1.mp4
+	./$(TARGET) shappy.mp4 build/out.yuv
 
 clean:
 	rm -rf build
