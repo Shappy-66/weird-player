@@ -56,12 +56,12 @@ static int decode_packet(AVCodecContext *dec, const AVPacket *pkt){
                     return 0;
             char buf[AV_ERROR_MAX_STRING_SIZE];
             av_strerror(ret, buf, sizeof(buf));
-            printf("Error during decoding (%s)\n", av_err2str(ret));//这里也不是很懂这个错误处理,ai告诉的
+            printf("Error during decoding (%s)\n", buf);//这里也不是很懂这个错误处理,ai告诉的（在我的U里改成buf了，记得回到win里试试）
             return ret;
             }
           if (dec->codec->type == AVMEDIA_TYPE_VIDEO)
             ret = output_video_frame(frame);//写个判断,可以在这里写音频
-         av_frame_unref(frame);
+        av_frame_unref(frame);
     }
     return ret;
 }
@@ -191,7 +191,7 @@ end:
     if (ret < 0) {
         char buf[AV_ERROR_MAX_STRING_SIZE];
         av_strerror(ret, buf, sizeof(buf)); 
-        fprintf(stderr, "Error: %s\n", av_err2str(ret));
+        fprintf(stderr, "Error: %s\n", buf);
         return 1;
     }
     return 0;
